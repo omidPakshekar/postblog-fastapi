@@ -11,7 +11,7 @@ class UserBase(pydantic.BaseModel):
 
 # reciveing data from api
 class UserRequest(UserBase):
-    password_hash: str
+    password: str
 
     # stop lazy load data
     class Config:
