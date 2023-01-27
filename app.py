@@ -21,3 +21,15 @@ async def register_user(user: UserRequest, db: orm.Session = fastapi.Depends(get
     user = await create_user(user=user, db=db)
     print('uuuser', user)
     return await create_token(user=user)
+
+
+@app.post(base_addr + '/login')
+async def login_user(form_data: security.OAuth2PasswordRequestForm = fastapi.Depends(),
+                 db: orm.Session = fastapi.Depends(get_db)):
+    
+    db_user = await login(email=form_data.username, password=form_data.password, db=db)
+    # invalid login throw exception
+    if not db_user:
+        raise fastapi.HTTPException(status_code=403, detail='wrong logn credintial')
+    return await create_token(db_user)
+

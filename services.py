@@ -55,3 +55,22 @@ async def create_token(user: models.UesrModel):
 
     return dict(access_token=token, token_type='bearer')
 
+async def login(email: str, password: str, db: orm.Session):
+    db_user = await get_user_by_email(email=email, db=db)
+    if not db_user:
+        return False 
+    if not db_user.password_verification(password=password):
+        return False 
+    return db_user
+
+
+
+
+
+
+
+
+
+
+
+
