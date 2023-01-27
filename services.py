@@ -2,10 +2,17 @@ import database
 import models
 import email_validator
 import fastapi 
+import jwt 
+from fastapi import security, Depends
 from sqlalchemy import orm  
 from schemas import *  
 from passlib import hash
-import jwt 
+from models import *
+
+APP_SECRET_CODE = "SECRET"
+base_addr = '/api/v1/'
+oauth2scheams = security.OAuth2PasswordBearer(base_addr + 'login')
+
 
 def create_db():
     return database.Base.metadata.create_all(bind=database.engine)
@@ -63,6 +70,16 @@ async def login(email: str, password: str, db: orm.Session):
         return False 
     return db_user
 
+
+async def current_user(db: orm.Session = Depends(get_db), token: str = Depends(oauth2scheams)):
+    
+    try:
+        payload = jwt.decode(token, APP_SECRET_CODE, algorithms=['HS256'])
+        # get user by id and (email, name)
+        db_user = db.query(UesrModel).get(payload['id'])
+    except:
+        raise fastapi.HTTPException(status_code=401, detail='wrong Credentials')
+    return UserResponse.from_orm(db_user)
 
 
 
