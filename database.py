@@ -5,7 +5,7 @@ from sqlalchemy import orm
 
 
 
-DB_URL = "sqlite:///test.db"
+DB_URL = "sqlite:///test1.db"
 engine = sqlalchemy.create_engine(DB_URL, connect_args={'check_same_thread' : False})
 
 

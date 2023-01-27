@@ -1,12 +1,10 @@
-import pydantic
+from pydantic import BaseModel
 from datetime import datetime
 
 
-class UserBase(pydantic.BaseModel):
+class UserBase(BaseModel):
     email: str 
     name: str
-
-
 
 
 # reciveing data from api
@@ -27,7 +25,7 @@ class UserResponse(UserBase):
 
 
 
-class PostBase(pydantic.BaseModel):
+class PostBase(BaseModel):
     post_title: str 
     post_description: str 
     post_image: str

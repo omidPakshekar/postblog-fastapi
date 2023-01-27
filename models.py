@@ -14,7 +14,7 @@ class UesrModel(database.Base):
     email = sqlalchemy.Column(sqlalchemy.String, unique=True, index=True)
     password_hash = sqlalchemy.Column(sqlalchemy.String)
     created_at = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.utcnow())
-    posts = orm.relationship('Post', back_populates="user")
+    posts = orm.relationship('PostModel', back_populates="users")
 
     def password_verification(self, password: str):
        return hash.bcrypt.verify(password, self.password_hash)
@@ -26,6 +26,6 @@ class PostModel(database.Base):
     post_title = sqlalchemy.Column(sqlalchemy.String, index=True)
     post_image = sqlalchemy.Column(sqlalchemy.String)
     post_description = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.utcnow())
-    users = orm.relationship('User', back_populates="posts")
+    users = orm.relationship('UesrModel', back_populates="posts")
 
 

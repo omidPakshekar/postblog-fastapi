@@ -5,6 +5,7 @@ import fastapi
 from sqlalchemy import orm  
 from schemas import *  
 from passlib import hash
+import jwt 
 
 def create_db():
     return database.Base.metadata.create_all(bind=database.engine)
@@ -39,4 +40,18 @@ async def create_user(user: UserRequest, db: orm.Session):
     )
     db.add(user_obj)
     db.commit()
-    db.refresh()
+    db.refresh(user_obj)
+    return user_obj
+
+
+async def create_token(user: models.UesrModel):
+    # convert user modle to user schema
+    user_schema =  UserResponse.from_orm(user)
+    # convert obj to dic
+    print('schema', user_schema, 'endschema')
+    user_dict = user_schema.dict()
+    del user_dict['created_at']
+    token = jwt.encode(user_dict, 'SECRET')
+
+    return dict(access_token=token, token_type='bearer')
+
