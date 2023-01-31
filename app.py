@@ -3,7 +3,8 @@ from fastapi import security, Depends
 from sqlalchemy import orm 
 from schemas import *
 from services import *
-
+from typing import List
+import services
 
 app = fastapi.FastAPI()
 
@@ -47,5 +48,12 @@ async def create_post(post_request: PostRequest, user: UserRequest = fastapi.Dep
                     db: orm.Session = fastapi.Depends(get_db)):
 
     return await services_create_post(user=user, db=db, post=post_request)
+
+
+@app.get(base_addr + '/posts/user', response_model=List[PostResponse])
+async def get_posts_by_user(user: UserRequest = fastapi.Depends(current_user),
+    db: orm.Session = fastapi.Depends(get_db)):
+    return await services.get_posts_by_user(user=user, db=db)
+
 
 

@@ -93,6 +93,9 @@ async def services_create_post(user: UserResponse, db: orm.Session, post: PostRe
     # convert the post model DTO/Schema and return the api here
     return PostResponse.from_orm(post)
 
+async def get_posts_by_user(user: UserResponse, db: orm.Session):
+    posts = db.query(PostModel).filter_by(user_id=user.id)
+    return list(map(PostResponse.from_orm , posts))
 
 
 
