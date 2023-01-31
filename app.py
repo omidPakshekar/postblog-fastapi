@@ -25,10 +25,9 @@ async def register_user(user: UserRequest, db: orm.Session = fastapi.Depends(get
     return await create_token(user=user)
 
 
-@app.post(base_addr + '/login')
+@app.post('/login')
 async def login_user(form_data: security.OAuth2PasswordRequestForm = fastapi.Depends(),
                  db: orm.Session = fastapi.Depends(get_db)):
-    
     db_user = await login(email=form_data.username, password=form_data.password, db=db)
     # invalid login throw exception
     if not db_user:
@@ -39,3 +38,14 @@ async def login_user(form_data: security.OAuth2PasswordRequestForm = fastapi.Dep
 @app.get(base_addr + '/users/current-user', response_model=UserResponse)
 async def get_current_user(user: UserResponse = Depends(current_user)):
     return user
+
+
+
+
+@app.post('/api/v1/posts', response_model=PostResponse)
+async def create_post(post_request: PostRequest, user: UserRequest = fastapi.Depends(current_user),
+                    db: orm.Session = fastapi.Depends(get_db)):
+
+    return await services_create_post(user=user, db=db, post=post_request)
+
+

@@ -25,7 +25,8 @@ class PostModel(database.Base):
     user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
     post_title = sqlalchemy.Column(sqlalchemy.String, index=True)
     post_image = sqlalchemy.Column(sqlalchemy.String)
-    post_description = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.utcnow())
+    post_description = sqlalchemy.Column(sqlalchemy.String)
+    created_at = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.utcnow())
     users = orm.relationship('UesrModel', back_populates="posts")
 
 

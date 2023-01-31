@@ -11,7 +11,7 @@ from models import *
 
 APP_SECRET_CODE = "SECRET"
 base_addr = '/api/v1/'
-oauth2scheams = security.OAuth2PasswordBearer(base_addr + 'login')
+oauth2scheams = security.OAuth2PasswordBearer( 'login')
 
 
 def create_db():
@@ -24,7 +24,7 @@ def get_db():
     finally:
         db.close()
 
-# create_db()
+create_db()
 
 async def get_user_by_email(email: str, db: orm.Session):
     return db.query(models.UesrModel).filter(models.UesrModel.email == email).first()
@@ -72,7 +72,6 @@ async def login(email: str, password: str, db: orm.Session):
 
 
 async def current_user(db: orm.Session = Depends(get_db), token: str = Depends(oauth2scheams)):
-    
     try:
         payload = jwt.decode(token, APP_SECRET_CODE, algorithms=['HS256'])
         # get user by id and (email, name)
@@ -83,6 +82,16 @@ async def current_user(db: orm.Session = Depends(get_db), token: str = Depends(o
 
 
 
+
+async def services_create_post(user: UserResponse, db: orm.Session, post: PostRequest):
+    print('dict', post.dict(), 'end dict')
+    post = PostModel(**post.dict(), user_id=user.id)
+    db.add(post)
+    db.commit()
+    # reload post data and return back with id
+    db.refresh(post)
+    # convert the post model DTO/Schema and return the api here
+    return PostResponse.from_orm(post)
 
 
 
