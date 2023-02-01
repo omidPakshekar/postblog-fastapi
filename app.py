@@ -41,8 +41,6 @@ async def get_current_user(user: UserResponse = Depends(current_user)):
     return user
 
 
-
-
 @app.post('/api/v1/posts', response_model=PostResponse)
 async def create_post(post_request: PostRequest, user: UserRequest = fastapi.Depends(current_user),
                     db: orm.Session = fastapi.Depends(get_db)):
@@ -54,6 +52,12 @@ async def create_post(post_request: PostRequest, user: UserRequest = fastapi.Dep
 async def get_posts_by_user(user: UserRequest = fastapi.Depends(current_user),
     db: orm.Session = fastapi.Depends(get_db)):
     return await services.get_posts_by_user(user=user, db=db)
+
+@app.get(base_addr + 'posts/{post_id}/', response_model=PostResponse)
+async def get_post_detail(post_id: int, db: orm.Session = fastapi.Depends(services.get_db)):
+    post = await services.get_post_detail(post_id=post_id, db=db)
+    return post
+
 
 
 

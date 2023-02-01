@@ -98,6 +98,12 @@ async def get_posts_by_user(user: UserResponse, db: orm.Session):
     return list(map(PostResponse.from_orm , posts))
 
 
+async def get_post_detail(post_id : int, db: orm.Session):
+    db_post = db.query(PostModel).filter(PostModel.id==post_id).first()
+    if db_post is None:
+        raise fastapi.HTTPException(status_code=404, detail='Post not found')
+    return PostResponse.from_orm(db_post)
+
 
 
 
