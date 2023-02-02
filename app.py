@@ -82,8 +82,9 @@ async def get_posts_by_all(user: UserRequest = fastapi.Depends(current_user),
 
 
 @app.get(base_addr + 'users/{user_id}/', response_model=UserResponse)
-async def get_user_data(user_id: int, db: orm.Session = fastapi.Depends(services.get_db)):
-    pass 
+async def get_user_detail(user_id: int, db: orm.Session = fastapi.Depends(services.get_db)):
+    return await services.get_user_detail(user_id=user_id, db=db)
+    
 
 
 

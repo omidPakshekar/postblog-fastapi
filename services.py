@@ -120,8 +120,12 @@ async def update_post(post_request: PostRequest, post: PostModel, db: orm.Sessio
     db.refresh(post)
     return PostResponse.from_orm(post)
 
-
-
+async def get_user_detail(user_id : int, db: orm.Session):
+    db_user = db.query(UesrModel).filter(UesrModel.id==user_id).first()
+    if db_user is None:
+        raise fastapi.HTTPException(status_code=404, detail='user not found')
+    # return PostResponse.from_orm(db_post)
+    return UserResponse.from_orm(db_user)
 
 
 
