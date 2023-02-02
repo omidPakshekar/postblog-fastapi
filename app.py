@@ -56,7 +56,37 @@ async def get_posts_by_user(user: UserRequest = fastapi.Depends(current_user),
 @app.get(base_addr + 'posts/{post_id}/', response_model=PostResponse)
 async def get_post_detail(post_id: int, db: orm.Session = fastapi.Depends(services.get_db)):
     post = await services.get_post_detail(post_id=post_id, db=db)
-    return post
+    return PostResponse.from_orm(post)
+
+
+@app.delete(base_addr + 'posts/{post_id}/')
+async def get_post_delete(post_id: int, db: orm.Session = fastapi.Depends(services.get_db),
+                        user: UserRequest = fastapi.Depends(services.current_user)):
+    post = await services.get_post_detail(post_id=post_id, db=db)
+    await services.delete_post(post=post, db=db)
+
+    return 'Post deleted sucessfully'
+
+
+@app.put(base_addr + '/posts/{post_id}/', response_model=PostResponse)
+async def update_post(post_id: int, post_request: PostRequest, db: orm.Session = fastapi.Depends(services.get_db)):
+    db_post = await services.get_post_detail(post_id=post_id, db=db)
+
+    return await services.update_post(post_request=post_request, post=post_request, db=db)
+
+
+@app.get(base_addr + '/posts/all', response_model=List[PostResponse])
+async def get_posts_by_all(user: UserRequest = fastapi.Depends(current_user),
+    db: orm.Session = fastapi.Depends(get_db)):
+    return await services.get_posts_by_all(db=db)
+
+
+@app.get(base_addr + 'users/{user_id}/', response_model=UserResponse)
+async def get_user_data(user_id: int, db: orm.Session = fastapi.Depends(services.get_db)):
+    pass 
+
+
+
 
 
 

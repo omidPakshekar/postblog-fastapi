@@ -80,9 +80,6 @@ async def current_user(db: orm.Session = Depends(get_db), token: str = Depends(o
         raise fastapi.HTTPException(status_code=401, detail='wrong Credentials')
     return UserResponse.from_orm(db_user)
 
-
-
-
 async def services_create_post(user: UserResponse, db: orm.Session, post: PostRequest):
     print('dict', post.dict(), 'end dict')
     post = PostModel(**post.dict(), user_id=user.id)
@@ -97,12 +94,36 @@ async def get_posts_by_user(user: UserResponse, db: orm.Session):
     posts = db.query(PostModel).filter_by(user_id=user.id)
     return list(map(PostResponse.from_orm , posts))
 
+async def get_posts_by_all(db: orm.Session):
+    posts = db.query(PostModel)
+    return list(map(PostResponse.from_orm , posts))
+
 
 async def get_post_detail(post_id : int, db: orm.Session):
     db_post = db.query(PostModel).filter(PostModel.id==post_id).first()
     if db_post is None:
         raise fastapi.HTTPException(status_code=404, detail='Post not found')
-    return PostResponse.from_orm(db_post)
+    # return PostResponse.from_orm(db_post)
+    return db_post
+
+
+async def delete_post(post: PostModel, db: orm.Session):
+    db.delete(post)
+    db.commit()
+
+
+async def update_post(post_request: PostRequest, post: PostModel, db: orm.Session):
+    post.post_title = post_request.post_title
+    post.post_image = post_request.post_image
+    post.post_description = post_request.post_description
+    db.commit()
+    db.refresh(post)
+    return PostResponse.from_orm(post)
+
+
+
+
+
 
 
 
